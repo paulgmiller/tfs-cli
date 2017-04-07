@@ -21,17 +21,21 @@ export class BuildQueue extends buildBase.BuildBase<buildBase.BuildArguments, bu
 	protected serverCommand = false;
 
 	protected getHelpArgs(): string[] {
-		return ["project", "definitionId", "definitionName"];
+		return [];
 	}
 
 	public exec(): Promise<buildContracts.Build> {
-
-	  return new Promise<buildContracts.Build>(function(resolve,reject){
-        git().listRemote(['--get-url'],function(err,data){
-             if(err !== null) return reject(err);
-             resolve(data);
-         });
-	  });
+	 let remotes = Q.ninvoke(git(), "listRemote", ['--get-url']);
+	 let head = Q.ninvoke(git(), "revparse", ['HEAD']);
+	 	 
+		  
+	 return Promise.all([remotes, head]).then(function (data)  {
+	 	trace.info(data[0]);
+	 	trace.info(data[1]);
+	 	return new Promise<buildContracts.Build>(function(resolve,reject) { throw new Error("sadness");});
+	 })
+	 
+		
 	}
 
 	public friendlyOutput(build: buildContracts.Build): void {
@@ -41,7 +45,5 @@ export class BuildQueue extends buildBase.BuildBase<buildBase.BuildArguments, bu
 
 		trace.println();
 		trace.info(build);
-
-
 	}
 }
