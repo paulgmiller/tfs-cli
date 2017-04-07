@@ -25,14 +25,17 @@ export class BuildQueue extends buildBase.BuildBase<buildBase.BuildArguments, bu
 	}
 
 	public exec(): Promise<buildContracts.Build> {
-	 let remotes = Q.ninvoke(git(), "listRemote", ['--get-url']);
-	 let head = Q.ninvoke(git(), "revparse", ['HEAD']);
+	 let g = git();
+	 let listRemote = Q.nbind(g.listRemote, g);
+	 //let revparse = Q.nbind(git.revparse, g);
 	 	 
 		  
-	 return Promise.all([remotes, head]).then(function (data)  {
-	 	trace.info(data[0]);
-	 	trace.info(data[1]);
-	 	return new Promise<buildContracts.Build>(function(resolve,reject) { throw new Error("sadness");});
+	// return Promise.all([, revparse(['HEAD'])]).then(function (data)  {
+	// 	trace.info(data[0]);
+	// 	trace.info(data[1]);
+	return listRemote(['--get-url']).then(function(r) {
+		trace.info(r);
+	 	throw new Error("sadness");
 	 })
 	 
 		
